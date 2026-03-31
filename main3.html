@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICAIS 2026 — Conference Standee</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --r:#8B0000;--rl:#B01C1C;--g:#C9A84C;--gl:#E8CC80;--dk:#120606;
+  --W:900px;
+  --H:1820px;
+}
+body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;
+     padding:30px 16px;gap:16px;font-family:'DM Sans',sans-serif}
+.btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.btn{padding:11px 28px;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;
+     font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;
+     cursor:pointer;transition:background .2s}
+.btn-png{background:#C9A84C;color:#120606}
+.btn-png:hover{background:#E8CC80}
+.btn-pdf{background:#4a4a4a;color:#fff}
+.btn-pdf:hover{background:#666}
+.note{font-family:'DM Sans',sans-serif;font-size:12px;color:#aaa;text-align:center;
+      max-width:620px;line-height:1.6}
+.note strong{color:#C9A84C}
+
+#s{width:var(--W);height:var(--H);background:var(--dk);position:relative;
+   overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.8)}
+#s::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 90% 45% at 50% 0%,rgba(139,0,0,.6) 0%,transparent 65%),
+             radial-gradient(ellipse 70% 35% at 50% 100%,rgba(100,0,0,.4) 0%,transparent 55%);z-index:0}
+#s::after{content:'';position:absolute;inset:0;
+  background-image:repeating-linear-gradient(-45deg,transparent,transparent 20px,
+    rgba(255,255,255,.008) 20px,rgba(255,255,255,.008) 21px);z-index:0}
+.z{position:relative;z-index:1}
+
+/* HEADER */
+.hd{background:linear-gradient(135deg,var(--r) 0%,var(--rl) 60%,#6A0000 100%);
+    padding:22px 40px;display:flex;align-items:center;justify-content:space-between;
+    border-bottom:3px solid var(--g);gap:16px}
+.logo{width:96px;height:96px;background:#fff;border-radius:10px;overflow:hidden;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;flex-grow:0}
+.logo img{width:100%;height:100%;object-fit:contain;object-position:center;
+          padding:5px;max-width:100%;max-height:100%}
+.hd-mid{flex:1;text-align:center}
+.hd-mid .inst{font-weight:600;font-size:15px;letter-spacing:2.5px;text-transform:uppercase;
+              color:rgba(255,255,255,.88);line-height:1.5}
+.hd-mid .sch{font-size:12px;letter-spacing:2px;color:rgba(255,255,255,.85);
+             text-transform:uppercase;margin-top:3px}
+
+/* HERO */
+.hero{padding:36px 40px 20px;text-align:center}
+.tag{display:inline-block;font-size:12px;font-weight:600;letter-spacing:5px;
+     text-transform:uppercase;color:var(--g);border:1px solid rgba(201,168,76,.4);
+     padding:7px 20px;border-radius:2px;margin-bottom:18px}
+.abbr{font-family:'Bebas Neue',sans-serif;font-size:155px;line-height:.85;color:#fff;
+      letter-spacing:6px;text-shadow:0 8px 40px rgba(139,0,0,.9)}
+.abbr em{color:var(--g);font-style:normal}
+.yr{font-weight:300;font-size:60px;color:rgba(255,255,255,.45);letter-spacing:20px;
+    display:block;margin-top:6px}
+.div{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--g),transparent);
+     margin:18px auto}
+.full{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;
+      letter-spacing:1.5px;color:rgba(255,255,255,.9);line-height:1.5;
+      max-width:580px;margin:0 auto}
+
+/* THEME BAND */
+.theme{background:linear-gradient(90deg,var(--r),var(--rl),var(--r));
+       border-top:1px solid rgba(201,168,76,.4);border-bottom:1px solid rgba(201,168,76,.4);
+       padding:16px 48px;text-align:center}
+.tl{font-size:11px;letter-spacing:4px;color:rgba(255,255,255,.75);
+    text-transform:uppercase;margin-bottom:6px}
+.tt{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:26px;
+    color:var(--gl);letter-spacing:.5px;line-height:1.4}
+
+/* CAMPUS */
+.campus{height:200px;position:relative;overflow:hidden}
+.campus img{width:100%;height:100%;object-fit:cover;object-position:center 40%;
+            filter:brightness(.4) saturate(.55)}
+.campus-grad{position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(18,6,6,.25) 0%,transparent 35%,
+    transparent 60%,rgba(18,6,6,.95) 100%)}
+
+/* META ROW */
+.meta{display:flex;padding:22px 28px;justify-content:center}
+.mp{display:flex;flex-direction:column;align-items:center;padding:14px 28px;
+    flex:1;position:relative;gap:5px}
+.mp:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;bottom:20%;
+  width:1px;background:rgba(201,168,76,.22)}
+.mi{font-size:28px;margin-bottom:2px}
+.mv{font-weight:700;font-size:28px;color:#fff;text-align:center}
+.ml{font-size:14px;color:rgba(255,255,255,.6);letter-spacing:2px;
+    text-transform:uppercase;text-align:center;font-weight:500}
+.ga{color:var(--g)}
+
+/* SECTION HEADER */
+.sec{padding:0 32px 10px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.sh::before{content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.45))}
+.sh::after{content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,rgba(201,168,76,.45),transparent)}
+.st{font-size:12px;font-weight:600;letter-spacing:4px;text-transform:uppercase;
+    color:var(--g);white-space:nowrap}
+
+/* SPEAKERS */
+.srow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px 10px;padding:0 28px 16px}
+.sc{display:flex;flex-direction:column;align-items:center;gap:7px}
+.sph{width:130px;height:130px;border-radius:50%;border:2.5px solid rgba(201,168,76,.55);
+     overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,var(--r),#280505)}
+.sph img{width:100%;height:100%;object-fit:cover}
+.sn{font-size:13px;font-weight:600;color:#fff;text-align:center;line-height:1.35}
+.sa{font-size:11px;color:rgba(255,255,255,.45);text-align:center;line-height:1.35}
+.srow .sc:nth-child(7){grid-column:2}
+
+/* FOOTER */
+.ft{background:#0D0303;border-top:2.5px solid var(--r);padding:20px 32px;
+    display:flex;flex-direction:column;align-items:center;gap:7px}
+.fw{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--g);letter-spacing:3px}
+.fe{font-size:15px;color:rgba(255,255,255,.6);letter-spacing:.5px}
+.fl{font-size:13px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.45)}
+</style>
+</head>
+<body>
+
+<div class="btns">
+  <button class="btn btn-png" onclick="downloadPNG()">⬇ Download PNG (Print-Ready)</button>
+  <button class="btn btn-pdf" onclick="downloadPDF()">⬇ Download PDF (3×6 ft)</button>
+</div>
+<div class="note">
+  <strong>PNG</strong> = recommended · send to print shop and ask for <strong>3ft × 6ft print</strong><br>
+  <strong>PDF</strong> = page set to exact 3ft × 6ft (914mm × 1828mm)
+</div>
+
+<div id="s">
+
+  <div class="hd z">
+    <div class="logo"><img src="nmims.png" alt="NMIMS" width="96" height="96"></div>
+    <div class="hd-mid">
+      <div class="inst">SVKM's NMIMS Indore Campus</div>
+      <div class="sch">School of Technology, Management & Engineering</div>
+      <div class="sch" style="color:rgba(255,255,255,.3);margin-top:2px">Madhya Pradesh, India</div>
+    </div>
+    <div class="logo"><img src="springer.png" alt="Springer" width="96" height="96"></div>
+  </div>
+
+  <div class="hero z">
+    <div class="tag">1st International Conference</div>
+    <div class="abbr">IC<em>AI</em>S</div>
+    <span class="yr">2026</span>
+    <div class="div"></div>
+    <div class="full">International Conference on<br>Artificial Intelligence and Security</div>
+  </div>
+
+  <div class="theme z">
+    <div class="tl">Conference Theme</div>
+    <div class="tt">AI for a Secure and Trustworthy Digital Future:<br>Innovate. Protect. Transform.</div>
+  </div>
+
+  <div class="campus z">
+    <img src="campus.jpg" alt="NMIMS Indore Campus">
+    <div class="campus-grad"></div>
+  </div>
+
+  <div class="meta z">
+    <div class="mp">
+      <div class="mi">📅</div>
+      <div class="mv ga">Apr 2–3, 2026</div>
+      <div class="ml">Conference Dates</div>
+    </div>
+    <div class="mp">
+      <div class="mi">📍</div>
+      <div class="mv">Indore, India</div>
+      <div class="ml">Hybrid Mode</div>
+    </div>
+    <div class="mp">
+      <div class="mi">⏰</div>
+      <div class="mv">09:00 to 17:30</div>
+      <div class="ml">Both Days</div>
+    </div>
+  </div>
+
+  <div class="sec z" style="padding-bottom:6px">
+    <div class="sh"><span class="st">Keynote Speakers</span></div>
+  </div>
+  <div class="srow z">
+    <div class="sc">
+      <div class="sph"><img src="speaker1.png" alt=""></div>
+      <div class="sn">Prof. Himanshu Rai</div>
+      <div class="sa">Director, IIM Indore</div>
+    </div>
+    <div class="sc">
+      <div class="sph"><img src="speaker2.png" alt=""></div>
+      <div class="sn">Prof. Neetesh Purohit</div>
+      <div class="sa">Director, SGSITS Indore</div>
+    </div>
+    <div class="sc">
+      <div class="sph"><img src="speaker3.png" alt=""></div>
+      <div class="sn">Prof. Om Prakash Vyas</div>
+      <div class="sa">Director, IIIT Naya Raipur</div>
+    </div>
+    <div class="sc">
+      <div class="sph"><img src="speaker4.png" alt=""></div>
+      <div class="sn">Dr. Pritee Sharma</div>
+      <div class="sa">Assoc. Prof. & Dean, IIT Indore</div>
+    </div>
+    <div class="sc">
+      <div class="sph"><img src="speaker5.webp" alt=""></div>
+      <div class="sn">Dr. Nguyen Ha Huy Cuong</div>
+      <div class="sa">Univ. of Danang, Vietnam</div>
+    </div>
+    <div class="sc">
+      <div class="sph"><img src="speaker6.jpeg" alt=""></div>
+      <div class="sn">Dr. Shamik Tiwari</div>
+      <div class="sa">Prof., UPES Dehradun</div>
+    </div>
+    <div class="sc">
+      <div class="sph"><img src="speaker7.png" alt=""></div>
+      <div class="sn">Dr. Bhargavi Goswami</div>
+      <div class="sa">AIBI, Brisbane, Australia</div>
+    </div>
+  </div>
+
+  <div class="ft z">
+    <div class="fw">www.icais2026.com</div>
+    <div class="fe">icais.indore2026@nmims.edu</div>
+    <div class="fl">SVKM's NMIMS · Indore Campus · MP, India</div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  const DESIGN_W = 900;
+  const DESIGN_H = 1820;
+
+  async function captureCanvas(scale) {
+    const el = document.getElementById('s');
+    return await html2canvas(el, {
+      scale: scale,
+      useCORS: true,
+      allowTaint: false,
+      imageTimeout: 0,
+      backgroundColor: '#120606',
+      logging: false,
+      windowWidth: DESIGN_W,
+      windowHeight: DESIGN_H
+    });
+  }
+
+  async function downloadPNG() {
+    const btn = document.querySelector('.btn-png');
+    btn.textContent = '⏳ Generating PNG…';
+    btn.disabled = true;
+    try {
+      const canvas = await captureCanvas(2);
+      const link = document.createElement('a');
+      link.download = 'ICAIS2026_Standee_3x6ft.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch(e) {
+      alert('PNG export failed: ' + e.message);
+    } finally {
+      btn.textContent = '⬇ Download PNG (Print-Ready)';
+      btn.disabled = false;
+    }
+  }
+
+  async function downloadPDF() {
+    const btn = document.querySelector('.btn-pdf');
+    btn.textContent = '⏳ Generating PDF…';
+    btn.disabled = true;
+    try {
+      const canvas = await captureCanvas(2);
+      const { jsPDF } = window.jspdf;
+      const PDF_W_MM = 914.4;
+      const PDF_H_MM = 1828.8;
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: [PDF_W_MM, PDF_H_MM]
+      });
+      pdf.addImage(
+        canvas.toDataURL('image/jpeg', 0.97),
+        'JPEG', 0, 0, PDF_W_MM, PDF_H_MM
+      );
+      pdf.save('ICAIS2026_Standee_3x6ft.pdf');
+    } catch(e) {
+      alert('PDF export failed: ' + e.message);
+    } finally {
+      btn.textContent = '⬇ Download PDF (3×6 ft)';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

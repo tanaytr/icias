@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICAIS 2026 — Keynote Speaker</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--r:#8B0000;--rl:#B01C1C;--g:#C9A84C;--gl:#E8CC80;--dk:#120606;--W:900px;--H:1750px}
+body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;padding:30px 16px;gap:16px;font-family:'DM Sans',sans-serif}
+
+.btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.btn{padding:11px 28px;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;
+     font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;
+     cursor:pointer;transition:background .2s}
+.btn-png{background:#C9A84C;color:#120606}
+.btn-png:hover{background:#E8CC80}
+.btn-pdf{background:#4a4a4a;color:#fff}
+.btn-pdf:hover{background:#666}
+.note{font-family:'DM Sans',sans-serif;font-size:12px;color:#aaa;text-align:center;
+      max-width:620px;line-height:1.6}
+.note strong{color:#C9A84C}
+
+#s{width:var(--W);height:var(--H);background:var(--dk);position:relative;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.8)}
+#s::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 90% 45% at 50% 0%,rgba(139,0,0,.6) 0%,transparent 65%),
+             radial-gradient(ellipse 70% 35% at 50% 100%,rgba(100,0,0,.4) 0%,transparent 55%);z-index:0}
+#s::after{content:'';position:absolute;inset:0;
+  background-image:repeating-linear-gradient(-45deg,transparent,transparent 20px,rgba(255,255,255,.008) 20px,rgba(255,255,255,.008) 21px);z-index:0}
+.z{position:relative;z-index:1}
+
+/* HEADER */
+.hd{background:linear-gradient(135deg,var(--r) 0%,var(--rl) 60%,#6A0000 100%);
+    padding:26px 40px;display:flex;align-items:center;justify-content:space-between;
+    border-bottom:3px solid var(--g);gap:16px}
+.logo{width:96px;height:96px;background:#fff;border-radius:10px;overflow:hidden;
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;flex-grow:0}
+.logo img{width:100%;height:100%;object-fit:contain;object-position:center;
+          padding:5px;max-width:100%;max-height:100%}
+.hd-mid{flex:1;text-align:center}
+.hd-mid .inst{font-weight:600;font-size:15px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.88);line-height:1.5}
+.hd-mid .sch{font-size:12px;letter-spacing:2px;color:rgba(255,255,255,.85);text-transform:uppercase;margin-top:3px}
+
+/* CONFERENCE BADGE */
+.conf-badge{text-align:center;padding-top:26px}
+.cb-inner{display:inline-block;background:linear-gradient(135deg,var(--r) 0%,var(--rl) 60%,#6A0000 100%);
+          border:2px solid var(--g);border-radius:4px;padding:14px 40px}
+/* text-shadow REMOVED — it causes html2canvas to drop sibling text nodes */
+.cb-abbr{font-family:'Bebas Neue',sans-serif;font-size:72px;color:#fff;letter-spacing:4px;
+         line-height:1;display:block;white-space:nowrap}
+.cb-yr{font-size:17px;color:rgba(255,255,255,.7);letter-spacing:6px;margin-top:3px}
+
+/* KEYNOTE LABEL */
+.kl-wrap{padding:16px 40px 0;text-align:center}
+.kl{display:inline-block;font-size:12px;font-weight:600;letter-spacing:4px;text-transform:uppercase;
+    color:var(--g);border:1px solid rgba(201,168,76,.4);padding:7px 26px;border-radius:2px}
+
+/* PHOTO */
+.photo-wrap{position:relative;margin:26px auto 0;width:310px;height:310px;border-radius:50%;overflow:hidden;
+            border:3px solid rgba(201,168,76,.6);box-shadow:0 0 0 8px rgba(139,0,0,.35),0 0 50px rgba(139,0,0,.5)}
+.photo-wrap img{width:100%;height:100%;object-fit:cover;object-position:center top;
+                filter:brightness(.88) saturate(.9)}
+
+/* NAME */
+.photo-name{text-align:center;padding:24px 28px 0}
+.pn-title{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--g);font-weight:600;margin-bottom:7px}
+.pn-name{font-family:'Bebas Neue',sans-serif;font-size:66px;letter-spacing:3px;color:#fff;line-height:1}
+.pn-role{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:var(--gl);margin-top:7px}
+
+/* DIVIDER */
+.div{width:80px;height:2px;background:linear-gradient(90deg,transparent,var(--g),transparent);margin:22px auto}
+
+/* QUOTE */
+.quote-wrap{padding:0 52px;text-align:center}
+.quote-mark{font-family:'Cormorant Garamond',serif;font-size:76px;color:rgba(201,168,76,.22);line-height:.6;display:block;margin-bottom:8px}
+.quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;
+       color:rgba(255,255,255,.88);line-height:1.65;letter-spacing:.3px}
+
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.sh::before{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,.45))}
+.sh::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,.45),transparent)}
+.st{font-size:12px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;color:var(--g);white-space:nowrap}
+
+/* BIO */
+.bio-sec{padding:24px 32px 0}
+.bio-facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.bf{background:rgba(139,0,0,.14);border:1px solid rgba(139,0,0,.28);
+    border-left:2px solid var(--rl);border-radius:2px;padding:11px 16px}
+.bf-label{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--g);font-weight:600;margin-bottom:3px}
+.bf-val{font-size:14px;color:rgba(255,255,255,.82);line-height:1.4}
+.bp{font-size:14.5px;color:rgba(255,255,255,.72);line-height:1.72}
+
+/* HIGHLIGHTS */
+.highlights{padding:20px 32px 0}
+.hl-list{display:flex;flex-direction:column;gap:8px}
+.hl-item{display:flex;align-items:flex-start;gap:12px;padding:11px 16px;
+         background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:2px}
+.hl-dot{width:5px;height:5px;border-radius:50%;background:var(--g);flex-shrink:0;margin-top:6px}
+.hl-text{font-size:14px;color:rgba(255,255,255,.75);line-height:1.45}
+
+/* META STRIP */
+.meta-strip{display:flex;padding:24px 28px 0;justify-content:center}
+.mp{display:flex;flex-direction:column;align-items:center;padding:14px 24px;flex:1;position:relative;gap:5px}
+.mp:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;bottom:20%;width:1px;background:rgba(201,168,76,.22)}
+.mi{font-size:24px;margin-bottom:2px}
+.mv{font-weight:700;font-size:20px;color:#fff;text-align:center}
+.mv.ga{color:var(--g)}
+.ml{font-size:12px;color:rgba(255,255,255,.5);letter-spacing:1.5px;text-transform:uppercase;text-align:center;font-weight:500}
+
+/* FOOTER */
+.ft{background:#0D0303;border-top:2px solid var(--r);padding:20px 28px;margin-top:22px;
+    display:flex;flex-direction:column;align-items:center;gap:6px}
+.fw{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--g);letter-spacing:2px}
+.fe{font-size:14px;color:rgba(255,255,255,.6);letter-spacing:.5px}
+.fl{font-size:13px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.45)}
+</style>
+</head>
+<body>
+
+<div class="btns">
+  <button class="btn btn-png" onclick="downloadPNG()">⬇ Download PNG (Print-Ready)</button>
+  <button class="btn btn-pdf" onclick="downloadPDF()">⬇ Download PDF (3×6 ft)</button>
+</div>
+<div class="note">
+  <strong>PNG</strong> = recommended · send to print shop and ask for <strong>3ft × 6ft print</strong><br>
+  <strong>PDF</strong> = page set to exact 3ft × 6ft (914mm × 1828mm)
+</div>
+
+<div id="s">
+
+  <!-- HEADER -->
+  <div class="hd z">
+    <div class="logo"><img src="nmims.png" alt="NMIMS" width="96" height="96"></div>
+    <div class="hd-mid">
+      <div class="inst">SVKM's NMIMS Indore Campus</div>
+      <div class="sch">School of Technology, Management & Engineering</div>
+      <div class="sch" style="color:rgba(255,255,255,.45);margin-top:2px">Madhya Pradesh, India</div>
+    </div>
+    <div class="logo"><img src="springer.png" alt="Springer" width="96" height="96"></div>
+  </div>
+
+  <!-- CONFERENCE BADGE -->
+  <!-- Using a table-like approach: three separate divs side by side so html2canvas
+       never has to render mixed inline text nodes in one element -->
+  <div class="conf-badge z">
+    <div class="cb-inner">
+      <div style="display:flex;align-items:baseline;justify-content:center;
+                  font-family:'Bebas Neue',sans-serif;font-size:72px;
+                  letter-spacing:4px;line-height:1;white-space:nowrap">
+        <span style="color:#fff">IC</span><span style="color:#C9A84C">AI</span><span style="color:#fff">S</span>
+      </div>
+      <div class="cb-yr">2026</div>
+    </div>
+  </div>
+  <div class="kl-wrap z">
+    <span class="kl">✦ Keynote Speaker ✦</span>
+  </div>
+
+  <!-- PHOTO -->
+  <div class="photo-wrap z">
+    <img src="speaker1.png" alt="Prof. Himanshu Rai" width="310" height="310">
+  </div>
+  <div class="photo-name z">
+    <div class="pn-title">Keynote Speaker</div>
+    <div class="pn-name">Prof. Himanshu Rai</div>
+    <div class="pn-role">Director, IIM Indore</div>
+  </div>
+
+  <div class="div z"></div>
+
+  <!-- QUOTE -->
+  <div class="quote-wrap z">
+    <span class="quote-mark">"</span>
+    <div class="quote">Quality education is the most powerful means to help people realize their potential and bring meaningful change to society.</div>
+  </div>
+
+  <!-- MERGED BIO -->
+  <!-- <em> replaced with <span> to avoid html2canvas inline-element bug -->
+  <div class="bio-sec z">
+    <div class="sh"><span class="st">About the Speaker</span></div>
+    <div class="bio-facts">
+      <div class="bf">
+        <div class="bf-label">Institution</div>
+        <div class="bf-val">IIM Indore</div>
+      </div>
+      <div class="bf">
+        <div class="bf-label">Alma Mater</div>
+        <div class="bf-val">IIM Ahmedabad (Doctorate)</div>
+      </div>
+      <div class="bf">
+        <div class="bf-label">Expertise</div>
+        <div class="bf-val">Negotiation · Strategic HRM</div>
+      </div>
+      <div class="bf">
+        <div class="bf-label">Experience</div>
+        <div class="bf-val">18+ years · 20,000+ professionals trained</div>
+      </div>
+    </div>
+    <p class="bp">Prof. Rai has held positions at IIM Lucknow, XLRI Jamshedpur, and SDA Bocconi, Milan. He is the author of <span style="color:#E8CC80;font-style:italic">Negotiation</span> (McGraw-Hill), Convener of CAT 2010, and a TEDx speaker renowned for his course on Justice, Ethics &amp; Morality.</p>
+  </div>
+
+  <!-- HIGHLIGHTS -->
+  <div class="highlights z">
+    <div class="sh"><span class="st">Career Highlights</span></div>
+    <div class="hl-list">
+      <div class="hl-item"><div class="hl-dot"></div><div class="hl-text">Led the largest format change in global testing history as Convener of CAT 2010</div></div>
+      <div class="hl-item"><div class="hl-dot"></div><div class="hl-text">Strategic consultant to Government of India & Planning Commission</div></div>
+      <div class="hl-item"><div class="hl-dot"></div><div class="hl-text">Trained IAS, IFS officers & diplomats in Negotiation & Ethical Leadership</div></div>
+    </div>
+  </div>
+
+  <!-- META STRIP -->
+  <div class="meta-strip z">
+    <div class="mp">
+      <div class="mi">📅</div>
+      <div class="mv ga">Apr 2–3, 2026</div>
+      <div class="ml">Conference Dates</div>
+    </div>
+    <div class="mp">
+      <div class="mi">📍</div>
+      <div class="mv">Indore, India</div>
+      <div class="ml">Hybrid Mode</div>
+    </div>
+    <div class="mp">
+      <div class="mi">⏰</div>
+      <div class="mv">09:00 to 17:30</div>
+      <div class="ml">Both Days</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="ft z">
+    <div class="fw">www.icais2026.com</div>
+    <div class="fe">icais.indore2026@nmims.edu</div>
+    <div class="fl">SVKM's NMIMS · Indore Campus · MP, India</div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  const DESIGN_W = 900;
+  const DESIGN_H = 1750;
+
+  async function captureCanvas(scale) {
+    const el = document.getElementById('s');
+    return await html2canvas(el, {
+      scale: scale,
+      useCORS: true,
+      allowTaint: false,
+      imageTimeout: 0,
+      backgroundColor: '#120606',
+      logging: false,
+      windowWidth: DESIGN_W,
+      windowHeight: DESIGN_H
+    });
+  }
+
+  async function downloadPNG() {
+    const btn = document.querySelector('.btn-png');
+    btn.textContent = '⏳ Generating PNG…';
+    btn.disabled = true;
+    try {
+      const canvas = await captureCanvas(2);
+      const link = document.createElement('a');
+      link.download = 'ICAIS2026_Speaker_HimanshuRai_3x6ft.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch(e) {
+      alert('PNG export failed: ' + e.message);
+    } finally {
+      btn.textContent = '⬇ Download PNG (Print-Ready)';
+      btn.disabled = false;
+    }
+  }
+
+  async function downloadPDF() {
+    const btn = document.querySelector('.btn-pdf');
+    btn.textContent = '⏳ Generating PDF…';
+    btn.disabled = true;
+    try {
+      const canvas = await captureCanvas(2);
+      const { jsPDF } = window.jspdf;
+      const PDF_W_MM = 914.4;
+      const PDF_H_MM = 1828.8;
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: [PDF_W_MM, PDF_H_MM]
+      });
+      pdf.addImage(
+        canvas.toDataURL('image/jpeg', 0.97),
+        'JPEG', 0, 0, PDF_W_MM, PDF_H_MM
+      );
+      pdf.save('ICAIS2026_Speaker_HimanshuRai_3x6ft.pdf');
+    } catch(e) {
+      alert('PDF export failed: ' + e.message);
+    } finally {
+      btn.textContent = '⬇ Download PDF (3×6 ft)';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
