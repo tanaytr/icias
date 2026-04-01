@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICAIS 2026 — Video Slide Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --r: #C8181A;
+  --rd: #8B0000;
+  --rg: rgba(200,24,26,0.15);
+  --ink: #0e0e0e;
+  --mid: #3a3a3a;
+  --lt: #888;
+  --bg: #0e0e0e;
+  --W: 1280px;
+  --H: 720px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #111;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  gap: 16px;
+  min-height: 100vh;
+}
+
+/* ═══ TOOLBAR ═══ */
+.toolbar {
+  width: var(--W);
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.toolbar-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 15px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #fff;
+  flex: 1;
+}
+.toolbar-title span { color: var(--r); }
+.btn {
+  padding: 9px 20px;
+  border: none;
+  border-radius: 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.btn-red { background: var(--r); color: #fff; }
+.btn-red:hover { background: #e02020; }
+.btn-dark { background: #333; color: #fff; }
+.btn-dark:hover { background: #444; }
+.btn:disabled { opacity: .4; cursor: wait; }
+
+.slide-nav {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.slide-dot {
+  width: 28px; height: 5px;
+  border-radius: 3px;
+  background: #444;
+  cursor: pointer;
+  transition: all .25s;
+}
+.slide-dot.active { background: var(--r); width: 44px; }
+.slide-dot:hover:not(.active) { background: #666; }
+
+.progress-bar {
+  height: 3px;
+  width: var(--W);
+  background: #222;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--rd), var(--r));
+  width: 0%;
+  transition: width .1s linear;
+}
+
+/* ═══ STAGE ═══ */
+.stage-wrap {
+  position: relative;
+  width: var(--W);
+  height: var(--H);
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.6);
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  width: var(--W);
+  height: var(--H);
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+.slide.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ═══ CONTROLS OVERLAY ═══ */
+.ctrl-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  pointer-events: none;
+}
+.ctrl-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.55);
+  border: 1px solid rgba(255,255,255,.15);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  pointer-events: all;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+  backdrop-filter: blur(8px);
+}
+.ctrl-btn:hover { background: var(--r); border-color: var(--r); }
+
+/* ═══ RECORDING UI ═══ */
+.rec-badge {
+  display: none;
+  position: fixed;
+  top: 16px; right: 16px;
+  background: var(--r);
+  color: #fff;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  z-index: 9999;
+  animation: recPulse 1s infinite;
+}
+.rec-badge.show { display: block; }
+@keyframes recPulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: .6; }
+}
+
+/* ══════════════════════════════════════════
+   SLIDE 1 — CONFERENCE OVERVIEW
+══════════════════════════════════════════ */
+#s1 {
+  background: #fff;
+  display: grid;
+  grid-template-columns: 500px 1fr;
+}
+
+.s1-left {
+  background: var(--ink);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 50px;
+}
+.s1-left::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  background: var(--r);
+}
+.s1-left-noise {
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.s1-tag {
+  font-size: 12px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--r);
+  font-weight: 700;
+  margin-bottom: 26px;
+}
+.s1-abbr {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 150px;
+  line-height: .82;
+  color: #fff;
+  letter-spacing: 6px;
+}
+.s1-abbr .ai { color: var(--r); }
+.s1-yr {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 56px;
+  color: rgba(255,255,255,.2);
+  letter-spacing: 22px;
+  margin-top: 12px;
+}
+.s1-div {
+  width: 70px; height: 3px;
+  background: var(--r);
+  margin: 28px 0;
+}
+.s1-full {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: rgba(255,255,255,.75);
+  line-height: 1.5;
+  font-weight: 600;
+}
+.s1-inst {
+  margin-top: 32px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  line-height: 1.8;
+}
+.s1-inst strong {
+  color: rgba(255,255,255,.8);
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.s1-right {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 56px;
+  position: relative;
+}
+.s1-right::after {
+  content: 'ICAIS';
+  position: absolute;
+  right: -10px; bottom: 10px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 220px;
+  color: rgba(0,0,0,.03);
+  letter-spacing: -5px;
+  line-height: 1;
+  pointer-events: none;
+}
+.s1-theme-label {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--r);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.s1-theme {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 28px;
+  color: var(--ink);
+  line-height: 1.45;
+  margin-bottom: 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+  font-weight: 600;
+}
+.s1-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 36px;
+}
+.s1-meta-item {
+  background: #f8f8f8;
+  border-left: 3px solid var(--r);
+  border-radius: 3px;
+  padding: 16px 20px;
+}
+.s1-meta-label {
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--r);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+.s1-meta-val {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--ink);
+}
+.s1-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 56px 0 0;
+}
+.s1-url {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  color: #fff;
+  letter-spacing: 2px;
+  height: 100%;
+  background: var(--r);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  margin-right: 20px;
+}
+.s1-email {
+  font-size: 13px;
+  color: rgba(255,255,255,.6);
+  letter-spacing: .5px;
+}
+
+/* ══════════════════════════════════════════
+   SLIDE 2 — ALL SPEAKERS (MULTI-LINE)
+══════════════════════════════════════════ */
+#s2 {
+  background: #0e0e0e;
+}
+.s2-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(200,24,26,.14) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 80% 100%, rgba(200,24,26,.06) 0%, transparent 60%);
+}
+.s2-grid-lines {
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0, rgba(255,255,255,.02) 1px, transparent 1px, transparent 80px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0, rgba(255,255,255,.02) 1px, transparent 1px, transparent 80px);
+}
+.s2-inner {
+  position: relative; z-index: 2;
+  padding: 0 56px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.s2-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px 0 28px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  margin-bottom: 28px;
+}
+.s2-htag {
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--r);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.s2-htitle {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  color: #fff;
+  letter-spacing: 4px;
+}
+.s2-hdate {
+  text-align: right;
+  font-family: 'Oswald', sans-serif;
+  font-size: 32px;
+  color: var(--r);
+  letter-spacing: 2px;
+}
+.s2-hdate span {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.s2-speakers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 20px 16px;
+  flex: 1;
+  align-items: center;
+  padding: 20px 0;
+}
+.s2-sp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.s2-photo {
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(200,24,26,.4);
+  background: #1a1a1a;
+  position: relative;
+}
+.s2-photo::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(180deg, transparent 50%, rgba(200,24,26,.15) 100%);
+}
+.s2-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.s2-sname {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  line-height: 1.3;
+}
+.s2-srole {
+  font-size: 11.5px;
+  color: rgba(255,255,255,.5);
+  text-align: center;
+  line-height: 1.4;
+}
+.s2-footer {
+  background: rgba(200,24,26,.08);
+  border: 1px solid rgba(200,24,26,.15);
+  border-radius: 3px;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
+  position: relative;
+  z-index: 10;
+}
+.s2-footer-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: rgba(255,255,255,.65);
+}
+.s2-footer-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--r);
+}
+
+/* ══════════════════════════════════════════
+   SLIDE 3 — PROF. HIMANSHU RAI / IIM INDORE
+══════════════════════════════════════════ */
+#s3 {
+  background: #fff;
+}
+.s3-bg-accent {
+  position: absolute;
+  top: 0; right: 0;
+  width: 520px; height: 100%;
+  background: linear-gradient(135deg, #f8f8f8 0%, #f2f2f2 100%);
+  clip-path: polygon(8% 0, 100% 0, 100% 100%, 0% 100%);
+}
+.s3-red-stripe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 6px; height: 100%;
+  background: var(--r);
+}
+.s3-bottom-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 62px;
+  background: var(--ink);
+  display: flex;
+  align-items: center;
+  padding: 0 48px;
+  gap: 24px;
+  z-index: 20;
+}
+.s3-inner {
+  position: relative; z-index: 2;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  height: calc(100% - 62px);
+}
+.s3-photo-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 36px;
+  position: relative;
+}
+.s3-photo-frame {
+  width: 260px; height: 260px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid rgba(200,24,26,.3);
+  box-shadow: 0 0 0 12px rgba(200,24,26,.05), 0 24px 60px rgba(0,0,0,.14);
+  background: #eee;
+  position: relative;
+}
+.s3-photo-frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.s3-photo-name {
+  margin-top: 24px;
+  text-align: center;
+}
+.s3-pn-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--r);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.s3-pn-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 38px;
+  color: var(--ink);
+  letter-spacing: 2px;
+  line-height: 1;
+}
+.s3-pn-role {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--mid);
+  margin-top: 6px;
+}
+.s3-content {
+  padding: 48px 52px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+.s3-section-tag {
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--r);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.s3-iim-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 76px;
+  color: var(--ink);
+  letter-spacing: 5px;
+  line-height: .88;
+  margin-bottom: 18px;
+}
+.s3-iim-full {
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--lt);
+  margin-bottom: 26px;
+  font-weight: 600;
+}
+.s3-hdiv {
+  width: 60px; height: 3px;
+  background: var(--r);
+  margin-bottom: 24px;
+}
+.s3-quote-wrap {
+  background: rgba(200,24,26,.05);
+  border: 1px solid rgba(200,24,26,.12);
+  border-radius: 4px;
+  padding: 18px 22px;
+  margin-bottom: 22px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.s3-qmark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px;
+  color: var(--r);
+  line-height: .6;
+  flex-shrink: 0;
+  opacity: .4;
+}
+.s3-qtext {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--mid);
+  line-height: 1.55;
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════════
+   SLIDE 4 — PROF. NEETESH PUROHIT / SGSITS
+══════════════════════════════════════════ */
+#s4 {
+  background: var(--ink);
+}
+.s4-accent {
+  position: absolute;
+  top: 0; right: 0;
+  width: 500px; height: 100%;
+  background: linear-gradient(140deg, #1a1a1a 0%, #141414 100%);
+  clip-path: polygon(10% 0, 100% 0, 100% 100%, 0% 100%);
+}
+.s4-red-top {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, var(--rd), var(--r), var(--rd));
+}
+.s4-inner {
+  position: relative; z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  height: 100%;
+}
+.s4-content {
+  padding: 52px 40px 52px 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.s4-section-tag {
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--r);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.s4-inst-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 72px;
+  color: #fff;
+  letter-spacing: 4px;
+  line-height: .88;
+  margin-bottom: 14px;
+}
+.s4-inst-full {
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 28px;
+  font-weight: 600;
+}
+.s4-hdiv {
+  width: 60px; height: 3px;
+  background: var(--r);
+  margin-bottom: 26px;
+}
+.s4-quote-wrap {
+  background: rgba(200,24,26,.08);
+  border: 1px solid rgba(200,24,26,.18);
+  border-radius: 4px;
+  padding: 18px 22px;
+  margin-bottom: 26px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.s4-qmark {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px;
+  color: var(--r);
+  line-height: .6;
+  flex-shrink: 0;
+  opacity: .5;
+}
+.s4-qtext {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: rgba(255,255,255,.75);
+  line-height: 1.55;
+  font-weight: 600;
+}
+.s4-photo-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 40px;
+}
+.s4-photo-frame {
+  width: 240px; height: 240px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(200,24,26,.4);
+  box-shadow: 0 0 0 12px rgba(200,24,26,.05), 0 24px 70px rgba(0,0,0,.5);
+  background: #1a1a1a;
+}
+.s4-photo-frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.s4-pn-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--r);
+  font-weight: 700;
+  margin-top: 22px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.s4-pn-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 34px;
+  color: #fff;
+  letter-spacing: 2px;
+  line-height: 1;
+  text-align: center;
+}
+.s4-pn-role {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: rgba(255,255,255,.55);
+  margin-top: 6px;
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Slide transition base */
+.slide { transition: opacity .0s; }
+
+.slide.entering { animation: slideEnter .65s cubic-bezier(.22,1,.36,1) forwards; }
+.slide.leaving  { animation: slideLeave .5s cubic-bezier(.22,1,.36,1) forwards; }
+
+@keyframes slideEnter {
+  from { opacity: 0; transform: translateX(60px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideLeave {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-60px); }
+}
+
+/* Per-element animation classes */
+.anim { opacity: 0; }
+.anim.go { animation-fill-mode: both; animation-timing-function: cubic-bezier(.22,1,.36,1); opacity: 1; }
+
+.anim-up.go  { animation-name: fadeInUp; }
+.anim-left.go{ animation-name: fadeInLeft; }
+.anim-right.go { animation-name: fadeInRight; }
+.anim-scale.go { animation-name: scaleIn; }
+
+.d0  { animation-duration: .55s; animation-delay: .05s; }
+.d1  { animation-duration: .55s; animation-delay: .2s; }
+.d2  { animation-duration: .55s; animation-delay: .38s; }
+.d3  { animation-duration: .55s; animation-delay: .52s; }
+.d4  { animation-duration: .55s; animation-delay: .66s; }
+.d5  { animation-duration: .55s; animation-delay: .8s; }
+.d6  { animation-duration: .55s; animation-delay: .94s; }
+.d7  { animation-duration: .55s; animation-delay: 1.08s; }
+.d8  { animation-duration: .55s; animation-delay: 1.22s; }
+.d9  { animation-duration: .55s; animation-delay: 1.36s; }
+.d10 { animation-duration: .55s; animation-delay: 1.5s; }
+.d11 { animation-duration: .55s; animation-delay: 1.64s; }
+.d12 { animation-duration: .55s; animation-delay: 1.78s; }
+
+/* Ticker bar at bottom of slides */
+.ticker-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 38px;
+  background: rgba(200,24,26,.9);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  z-index: 5;
+}
+.ticker-inner {
+  white-space: nowrap;
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  animation: tickerScroll 22s linear infinite;
+}
+.ticker-inner .dot {
+  color: rgba(255,255,255,.5);
+}
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Corner badge */
+.corner-badge {
+  position: absolute;
+  top: 18px; right: 18px;
+  background: var(--r);
+  color: #fff;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 15px;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  border-radius: 3px;
+  z-index: 5;
+}
+</style>
+</head>
+<body>
+
+<div class="rec-badge" id="recBadge">⏺ RECORDING</div>
+
+<!-- ═══ TOOLBAR ═══ -->
+<div class="toolbar">
+  <div class="toolbar-title">ICAIS 2026 <span>·</span> Video Slide Engine</div>
+  <div class="slide-nav" id="slideNav">
+    <div class="slide-dot active" onclick="goTo(0)" title="Conference Overview"></div>
+    <div class="slide-dot" onclick="goTo(1)" title="Speakers"></div>
+    <div class="slide-dot" onclick="goTo(2)" title="IIM Indore"></div>
+    <div class="slide-dot" onclick="goTo(3)" title="SGSITS Indore"></div>
+  </div>
+  <button class="btn btn-dark" onclick="togglePlay()" id="btnPlay">▶ Play All</button>
+  <button class="btn btn-red" onclick="startRecording()" id="btnRec">⏺ Export MP4</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- ═══ STAGE ═══ -->
+<div class="stage-wrap" id="stage">
+
+  <!-- CTRL -->
+  <div class="ctrl-overlay">
+    <div class="ctrl-btn" onclick="prevSlide()">‹</div>
+    <div class="ctrl-btn" onclick="nextSlide()">›</div>
+  </div>
+
+  <!-- ══ SLIDE 1: CONFERENCE ══ -->
+  <div class="slide active" id="s1">
+    <div class="s1-left">
+      <div class="s1-left-noise"></div>
+      <div class="s1-tag anim anim-up d0">International Conference · 2026</div>
+      <div class="s1-abbr anim anim-left d1">IC<span class="ai">AI</span>S</div>
+      <div class="s1-yr anim anim-left d2">2026</div>
+      <div class="s1-div anim anim-up d3"></div>
+      <div class="s1-full anim anim-up d4">Artificial Intelligence<br>and Security</div>
+      <div class="s1-inst anim anim-up d5">
+        <strong>SVKM's NMIMS Indore</strong>
+        Madhya Pradesh, India
+      </div>
+    </div>
+    <div class="s1-right">
+      <div class="s1-right-inner" style="padding-bottom:80px;">
+        <div class="s1-theme-label anim anim-right d1">Conference Theme</div>
+        <div class="s1-theme anim anim-right d2">AI for a Secure Digital Future</div>
+        <div class="s1-meta-grid">
+          <div class="s1-meta-item anim anim-up d3">
+            <div class="s1-meta-label">📅 Dates</div>
+            <div class="s1-meta-val">April 2–3, 2026</div>
+          </div>
+          <div class="s1-meta-item anim anim-up d4">
+            <div class="s1-meta-label">📍 Venue</div>
+            <div class="s1-meta-val">Indore · Hybrid</div>
+          </div>
+          <div class="s1-meta-item anim anim-up d5">
+            <div class="s1-meta-label">⏰ Timings</div>
+            <div class="s1-meta-val">09:00 – 17:30 IST</div>
+          </div>
+          <div class="s1-meta-item anim anim-up d6">
+            <div class="s1-meta-label">📚 Publisher</div>
+            <div class="s1-meta-val">Springer LNNS</div>
+          </div>
+        </div>
+      </div>
+      <div class="s1-bottom anim anim-up d7">
+        <div class="s1-url">www.icais2026.com</div>
+        <div class="s1-email">icais.indore2026@nmims.edu</div>
+      </div>
+    </div>
+
+    <!-- ticker -->
+    <div class="ticker-bar" style="bottom:60px;height:32px;">
+      <div class="ticker-inner">
+        <span>ICAIS 2026</span><span class="dot">◆</span>
+        <span>April 2–3, 2026</span><span class="dot">◆</span>
+        <span>Indore, India</span><span class="dot">◆</span>
+        <span>Hybrid Mode</span><span class="dot">◆</span>
+        <span>Springer LNNS</span><span class="dot">◆</span>
+        <span>www.icais2026.com</span><span class="dot">◆</span>
+        <span>SVKM's NMIMS</span><span class="dot">◆</span>
+        <span>ICAIS 2026</span><span class="dot">◆</span>
+        <span>April 2–3, 2026</span><span class="dot">◆</span>
+        <span>Indore, India</span><span class="dot">◆</span>
+        <span>Hybrid Mode</span><span class="dot">◆</span>
+        <span>Springer LNNS</span><span class="dot">◆</span>
+        <span>www.icais2026.com</span><span class="dot">◆</span>
+        <span>SVKM's NMIMS</span><span class="dot">◆</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 2: ALL SPEAKERS (MULTI-LINE) ══ -->
+  <div class="slide" id="s2">
+    <div class="s2-bg"></div>
+    <div class="s2-grid-lines"></div>
+    <div class="s2-inner">
+      <div class="s2-header">
+        <div>
+          <div class="s2-htag anim anim-up d0">ICAIS 2026 · Keynote Speakers</div>
+          <div class="s2-htitle anim anim-left d1">Distinguished Voices</div>
+        </div>
+        <div class="s2-hdate anim anim-right d1">
+          <span>Conference Dates</span>
+          Apr 2–3, 2026
+        </div>
+      </div>
+      <div class="s2-speakers">
+        <div class="s2-sp anim anim-up d2">
+          <div class="s2-photo"><img src="speaker1.png" alt="Himanshu Rai" onerror="this.src='https://ui-avatars.com/api/?name=HR&background=C8181A&color=fff&size=200'"></div>
+          <div class="s2-sname">Prof. Himanshu Rai</div>
+          <div class="s2-srole">Director, IIM Indore</div>
+        </div>
+        <div class="s2-sp anim anim-up d3">
+          <div class="s2-photo"><img src="speaker2.png" alt="Neetesh Purohit" onerror="this.src='https://ui-avatars.com/api/?name=NP&background=C8181A&color=fff&size=200'"></div>
+          <div class="s2-sname">Prof. Neetesh Purohit</div>
+          <div class="s2-srole">Director, SGSITS Indore</div>
+        </div>
+        <div class="s2-sp anim anim-up d4">
+          <div class="s2-photo"><img src="speaker3.png" alt="Om Prakash Vyas" onerror="this.src='https://ui-avatars.com/api/?name=OV&background=C8181A&color=fff&size=200'"></div>
+          <div class="s2-sname">Prof. Om Prakash Vyas</div>
+          <div class="s2-srole">Director, IIIT Naya Raipur</div>
+        </div>
+        <div class="s2-sp anim anim-up d5">
+          <div class="s2-photo"><img src="speaker4.png" alt="Pritee Sharma" onerror="this.src='https://ui-avatars.com/api/?name=PS&background=C8181A&color=fff&size=200'"></div>
+          <div class="s2-sname">Dr. Pritee Sharma</div>
+          <div class="s2-srole">Assoc. Prof., IIT Indore</div>
+        </div>
+        <div class="s2-sp anim anim-up d6">
+          <div class="s2-photo"><img src="speaker5.webp" alt="Nguyen Ha" onerror="this.src='https://ui-avatars.com/api/?name=NH&background=C8181A&color=fff&size=200'"></div>
+          <div class="s2-sname">Dr. Nguyen Ha Cuong</div>
+          <div class="s2-srole">Univ. of Danang, Vietnam</div>
+        </div>
+        <div class="s2-sp anim anim-up d7">
+          <div class="s2-photo"><img src="speaker6.jpeg" alt="Shamik Tiwari" onerror="this.src='https://ui-avatars.com/api/?name=ST&background=C8181A&color=fff&size=200'"></div>
+          <div class="s2-sname">Dr. Shamik Tiwari</div>
+          <div class="s2-srole">Prof., IILM University</div>
+        </div>
+        <div class="s2-sp anim anim-up d8">
+          <div class="s2-photo"><img src="speaker7.png" alt="Bhargavi Goswami" onerror="this.src='https://ui-avatars.com/api/?name=BG&background=C8181A&color=fff&size=200'"></div>
+          <div class="s2-sname">Dr. Bhargavi Goswami</div>
+          <div class="s2-srole">AIBI, Brisbane, Australia</div>
+        </div>
+      </div>
+      <div class="s2-footer anim anim-up d9">
+        <div class="s2-footer-dot"></div>
+        <div class="s2-footer-text">Global expertise in AI and Security research · www.icais2026.com</div>
+        <div class="s2-footer-dot"></div>
+      </div>
+    </div>
+
+    <!-- ticker -->
+    <div class="ticker-bar" style="bottom:0;background:rgba(200,24,26,.85);">
+      <div class="ticker-inner" style="color:rgba(255,255,255,.9);">
+        <span>7 INTERNATIONAL KEYNOTE SPEAKERS</span><span class="dot">◆</span>
+        <span>IIM INDORE</span><span class="dot">◆</span>
+        <span>SGSITS INDORE</span><span class="dot">◆</span>
+        <span>IIT INDORE</span><span class="dot">◆</span>
+        <span>IIIT NAYA RAIPUR</span><span class="dot">◆</span>
+        <span>UNIV. OF DANANG</span><span class="dot">◆</span>
+        <span>IILM UNIVERSITY</span><span class="dot">◆</span>
+        <span>AIBI AUSTRALIA</span><span class="dot">◆</span>
+        <span>7 INTERNATIONAL KEYNOTE SPEAKERS</span><span class="dot">◆</span>
+        <span>IIM INDORE</span><span class="dot">◆</span>
+        <span>SGSITS INDORE</span><span class="dot">◆</span>
+        <span>IIT INDORE</span><span class="dot">◆</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 3: IIM INDORE / PROF. RAI ══ -->
+  <div class="slide" id="s3">
+    <div class="s3-bg-accent"></div>
+    <div class="s3-red-stripe"></div>
+    <div class="corner-badge anim anim-scale d0">KEYNOTE</div>
+    <div class="s3-inner">
+      <div class="s3-photo-col">
+        <div class="s3-photo-frame anim anim-scale d2">
+          <img src="speaker1.png" alt="Prof. Himanshu Rai" onerror="this.src='https://ui-avatars.com/api/?name=HR&background=C8181A&color=fff&size=400'">
+        </div>
+        <div class="s3-photo-name">
+          <div class="s3-pn-label anim anim-up d3">Keynote Speaker</div>
+          <div class="s3-pn-name anim anim-up d4">Prof. Himanshu Rai</div>
+          <div class="s3-pn-role anim anim-up d5">Director, IIM Indore</div>
+        </div>
+      </div>
+      <div class="s3-content">
+        <div class="s3-section-tag anim anim-right d0">Institution</div>
+        <div class="s3-iim-name anim anim-right d1">IIM<br>Indore</div>
+        <div class="s3-iim-full anim anim-right d2">Indian Institute of Management Indore</div>
+        <div class="s3-hdiv anim anim-right d3"></div>
+        <div class="s3-quote-wrap anim anim-up d4">
+          <div class="s3-qmark">"</div>
+          <div class="s3-qtext">Quality education is the most powerful means to help people realize their potential.</div>
+        </div>
+      </div>
+    </div>
+    <div class="s3-bottom-bar anim anim-up d5">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:#fff;letter-spacing:2px;">ICAIS 2026</span>
+      <span style="width:1px;height:24px;background:rgba(255,255,255,.2);"></span>
+      <span style="font-size:13px;color:rgba(255,255,255,.5);letter-spacing:1.5px;text-transform:uppercase;">April 2–3, 2026 · Indore · Hybrid</span>
+      <span style="flex:1;"></span>
+      <span style="font-size:13px;color:rgba(255,255,255,.4);letter-spacing:1px;">www.icais2026.com</span>
+    </div>
+
+    <!-- ticker -->
+    <div class="ticker-bar" style="bottom:62px;height:30px;background:rgba(200,24,26,.12);border-top:1px solid rgba(200,24,26,.2);">
+      <div class="ticker-inner" style="color:rgba(200,24,26,.8);font-size:12px;">
+        <span>IIM INDORE</span><span class="dot" style="color:rgba(200,24,26,.4);">◆</span>
+        <span>INSTITUTE OF NATIONAL IMPORTANCE</span><span class="dot" style="color:rgba(200,24,26,.4);">◆</span>
+        <span>TOP 5 NIRF RANKING</span><span class="dot" style="color:rgba(200,24,26,.4);">◆</span>
+        <span>EST. 1996</span><span class="dot" style="color:rgba(200,24,26,.4);">◆</span>
+        <span>AACSB ACCREDITED</span><span class="dot" style="color:rgba(200,24,26,.4);">◆</span>
+        <span>IIM INDORE</span><span class="dot" style="color:rgba(200,24,26,.4);">◆</span>
+        <span>INSTITUTE OF NATIONAL IMPORTANCE</span><span class="dot" style="color:rgba(200,24,26,.4);">◆</span>
+        <span>TOP 5 NIRF RANKING</span><span class="dot" style="color:rgba(200,24,26,.4);">◆</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 4: SGSITS / PROF. PUROHIT ══ -->
+  <div class="slide" id="s4">
+    <div class="s4-accent"></div>
+    <div class="s4-red-top"></div>
+    <div class="corner-badge anim anim-scale d0">KEYNOTE</div>
+    <div class="s4-inner">
+      <div class="s4-content">
+        <div class="s4-section-tag anim anim-left d0">Institution</div>
+        <div class="s4-inst-name anim anim-left d1">SGSITS<br>Indore</div>
+        <div class="s4-inst-full anim anim-left d2">Shri G.S. Institute of Technology and Science</div>
+        <div class="s4-hdiv anim anim-left d3"></div>
+        <div class="s4-quote-wrap anim anim-up d4">
+          <div class="s4-qmark">"</div>
+          <div class="s4-qtext">Education must connect technology with society for sustainable development.</div>
+        </div>
+      </div>
+      <div class="s4-photo-col">
+        <div class="s4-photo-frame anim anim-scale d2">
+          <img src="speaker2.png" alt="Prof. Neetesh Purohit" onerror="this.src='https://ui-avatars.com/api/?name=NP&background=C8181A&color=fff&size=400'">
+        </div>
+        <div class="s4-pn-label anim anim-up d3">Keynote Speaker</div>
+        <div class="s4-pn-name anim anim-up d4">Prof. Neetesh Purohit</div>
+        <div class="s4-pn-role anim anim-up d5">Director, SGSITS Indore</div>
+      </div>
+    </div>
+
+    <!-- ticker -->
+    <div class="ticker-bar" style="bottom:0;background:var(--r);">
+      <div class="ticker-inner">
+        <span>SGSITS INDORE</span><span class="dot">◆</span>
+        <span>EST. 1952</span><span class="dot">◆</span>
+        <span>70+ YEARS OF TECHNICAL EXCELLENCE</span><span class="dot">◆</span>
+        <span>NAAC A+ GRADE</span><span class="dot">◆</span>
+        <span>ICAIS 2026 · APRIL 2–3</span><span class="dot">◆</span>
+        <span>www.icais2026.com</span><span class="dot">◆</span>
+        <span>SGSITS INDORE</span><span class="dot">◆</span>
+        <span>EST. 1952</span><span class="dot">◆</span>
+        <span>70+ YEARS OF TECHNICAL EXCELLENCE</span><span class="dot">◆</span>
+        <span>NAAC A+ GRADE</span><span class="dot">◆</span>
+        <span>ICAIS 2026 · APRIL 2–3</span><span class="dot">◆</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /stage-wrap -->
+
+<script>
+/* ══════════════ SLIDE ENGINE ══════════════ */
+const slides = document.querySelectorAll('.slide');
+const dots   = document.querySelectorAll('.slide-dot');
+const fill   = document.getElementById('progressFill');
+let current  = 0;
+let playing  = false;
+let playTimer = null;
+const SLIDE_DURATION = 7000;
+let slideStart = 0;
+let rafId = null;
+
+function triggerAnimations(slideEl) {
+  const elems = slideEl.querySelectorAll('.anim');
+  elems.forEach(el => {
+    el.classList.remove('go');
+    void el.offsetWidth;
+  });
+  requestAnimationFrame(() => {
+    elems.forEach(el => el.classList.add('go'));
+  });
+}
+
+function goTo(idx, direction = 'next') {
+  if (idx === current) return;
+  const prev = slides[current];
+  const next = slides[idx];
+
+  prev.classList.remove('active');
+  prev.classList.add('leaving');
+  setTimeout(() => prev.classList.remove('leaving'), 500);
+
+  next.classList.add('active', 'entering');
+  setTimeout(() => next.classList.remove('entering'), 650);
+
+  dots[current].classList.remove('active');
+  current = idx;
+  dots[current].classList.add('active');
+
+  triggerAnimations(next);
+
+  if (playing) {
+    slideStart = performance.now();
+  }
+}
+
+function nextSlide() {
+  goTo((current + 1) % slides.length);
+}
+function prevSlide() {
+  goTo((current - 1 + slides.length) % slides.length);
+}
+
+function togglePlay() {
+  playing = !playing;
+  const btn = document.getElementById('btnPlay');
+  if (playing) {
+    btn.textContent = '⏸ Pause';
+    slideStart = performance.now();
+    rafLoop();
+  } else {
+    btn.textContent = '▶ Play All';
+    cancelAnimationFrame(rafId);
+    fill.style.width = '0%';
+  }
+}
+
+function rafLoop(ts) {
+  if (!playing) return;
+  if (!ts) ts = performance.now();
+  const elapsed = ts - slideStart;
+  const pct = Math.min(100, (elapsed / SLIDE_DURATION) * 100);
+  fill.style.width = pct + '%';
+
+  if (elapsed >= SLIDE_DURATION) {
+    const next = (current + 1) % slides.length;
+    goTo(next);
+    slideStart = performance.now();
+  }
+  rafId = requestAnimationFrame(rafLoop);
+}
+
+triggerAnimations(slides[0]);
+
+/* ══════════════ IMPROVED MP4 EXPORT ══════════════ */
+let mediaRecorder = null;
+let recordedChunks = [];
+
+async function startRecording() {
+  const btn = document.getElementById('btnRec');
+  
+  // Check MediaRecorder support
+  if (!window.MediaRecorder) {
+    alert('Your browser does not support video recording.\n\nPlease use:\n• Google Chrome\n• Microsoft Edge\n• Firefox\n\nFor best quality, use Chrome or Edge.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Initializing...';
+  document.getElementById('recBadge').classList.add('show');
+
+  try {
+    // Create canvas for recording
+    const canvas = document.createElement('canvas');
+    canvas.width = 1280;
+    canvas.height = 720;
+    const ctx = canvas.getContext('2d');
+    
+    // Get the stage element
+    const stage = document.getElementById('stage');
+    
+    // Use canvas stream
+    const stream = canvas.captureStream(30);
+    
+    recordedChunks = [];
+    
+    // Check supported MIME types
+    const mimeTypes = [
+      'video/webm;codecs=vp9',
+      'video/webm;codecs=vp8',
+      'video/webm',
+    ];
+    
+    let selectedMimeType = '';
+    for (const type of mimeTypes) {
+      if (MediaRecorder.isTypeSupported(type)) {
+        selectedMimeType = type;
+        break;
+      }
+    }
+    
+    if (!selectedMimeType) {
+      throw new Error('No supported video format found');
+    }
+
+    mediaRecorder = new MediaRecorder(stream, { 
+      mimeType: selectedMimeType,
+      videoBitsPerSecond: 5000000
+    });
+    
+    mediaRecorder.ondataavailable = e => { 
+      if (e.data.size > 0) recordedChunks.push(e.data); 
+    };
+    
+    mediaRecorder.onstop = finishRecording;
+    mediaRecorder.start(100);
+
+    // Reset to first slide
+    if (current !== 0) {
+      slides[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      current = 0;
+      slides[0].classList.add('active');
+      dots[0].classList.add('active');
+      triggerAnimations(slides[0]);
+    }
+
+    const totalSlides = slides.length;
+    const perSlide = SLIDE_DURATION;
+    
+    // Capture function
+    function captureFrame() {
+      ctx.drawImage(stage, 0, 0, 1280, 720);
+    }
+    
+    // Capture frames at 30fps
+    const captureInterval = setInterval(captureFrame, 1000/30);
+
+    // Record all slides
+    for (let i = 0; i < totalSlides; i++) {
+      btn.textContent = `⏺ Recording ${i+1}/${totalSlides}...`;
+      if (i > 0) goTo(i);
+      await sleep(perSlide);
+    }
+
+    clearInterval(captureInterval);
+    mediaRecorder.stop();
+    
+  } catch(err) {
+    console.error('Recording error:', err);
+    btn.disabled = false;
+    btn.textContent = '⏺ Export MP4';
+    document.getElementById('recBadge').classList.remove('show');
+    
+    alert(`Recording failed: ${err.message}\n\nTry using:\n1. Chrome or Edge browser\n2. Screen recording software (OBS Studio)\n3. Built-in screen recorder (Win+G on Windows)`);
+  }
+}
+
+function sleep(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+function finishRecording() {
+  const btn = document.getElementById('btnRec');
+  const blob = new Blob(recordedChunks, { type: 'video/webm' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'ICAIS2026_Slides.webm';
+  a.click();
+  URL.revokeObjectURL(url);
+
+  btn.disabled = false;
+  btn.textContent = '⏺ Export MP4';
+  document.getElementById('recBadge').classList.remove('show');
+
+  showToast('✅ Video downloaded! Convert to MP4 with: ffmpeg -i ICAIS2026_Slides.webm -c:v libx264 ICAIS2026_Slides.mp4');
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = `
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:#1a1a1a;color:#fff;border:1px solid #333;border-left:3px solid #C8181A;
+    border-radius:6px;padding:14px 22px;font-size:13px;max-width:700px;text-align:center;
+    z-index:9999;line-height:1.5;box-shadow:0 10px 40px rgba(0,0,0,.5);
+  `;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 10000);
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevSlide();
+  if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+});
+</script>
+</body>
+</html>
