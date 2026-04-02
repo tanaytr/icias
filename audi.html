@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICAIS 2026 — Auditorium Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+  --r: #C8181A;
+  --rd: #8B0000;
+  --ink: #0d0d0d;
+  --bg: #ffffff;
+  --bg2: #f7f7f7;
+  --gold: #c9a84c;
+  --mid: #444;
+  --lt: #888;
+  --border: rgba(200,24,26,.2);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #1a1a1a;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 0 0 48px;
+  gap: 0;
+}
+
+/* ═══ TOOLBAR ═══ */
+.toolbar {
+  width: 100%;
+  background: #111;
+  border-bottom: 2px solid var(--r);
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.tb-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px;
+  letter-spacing: 5px;
+  color: #fff;
+}
+.tb-title span { color: var(--r); }
+.tb-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+.btn {
+  padding: 10px 22px;
+  border: none;
+  border-radius: 3px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .18s;
+}
+.btn-red { background: var(--r); color: #fff; }
+.btn-red:hover { background: var(--rd); }
+.btn-dark { background: #2a2a2a; color: #ddd; border: 1px solid #444; }
+.btn-dark:hover { background: #333; color: #fff; }
+.btn-nav {
+  width: 44px; height: 44px;
+  background: #222; color: #fff;
+  border: 1px solid #444;
+  border-radius: 3px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all .18s;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-nav:hover { background: var(--r); border-color: var(--r); }
+.btn-nav:disabled { opacity: .3; cursor: default; }
+.btn:disabled { opacity: .4; cursor: wait; }
+
+.slide-counter {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  color: #888;
+  letter-spacing: 3px;
+  min-width: 80px;
+  text-align: center;
+}
+.slide-counter span { color: #fff; }
+
+#status {
+  font-size: 11px;
+  color: #666;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  min-width: 180px;
+}
+#status.active { color: var(--r); }
+
+/* ═══ SLIDE DOTS ═══ */
+.slide-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #444;
+  cursor: pointer;
+  transition: all .2s;
+  border: none;
+}
+.dot.active { background: var(--r); transform: scale(1.3); }
+.dot:hover { background: #888; }
+
+/* ═══ SLIDE VIEWPORT ═══ */
+.viewport {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 32px 24px 0;
+}
+
+.stage {
+  width: 1280px;
+  height: 720px;
+  max-width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0,0,0,.8);
+  border: 1px solid #333;
+}
+
+/* ═══ SLIDE BASE ═══ */
+.slide {
+  position: absolute;
+  inset: 0;
+  width: 1280px;
+  height: 720px;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .6s ease;
+  overflow: hidden;
+}
+.slide.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ══════════════════════════════════════
+   SLIDE 1 — CONFERENCE HOMEPAGE
+══════════════════════════════════════ */
+#slide-1 {
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Animated background grid */
+#slide-1::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200,24,26,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,24,26,.06) 1px, transparent 1px);
+  background-size: 80px 80px;
+  animation: gridMove 20s linear infinite;
+}
+@keyframes gridMove {
+  0% { transform: translate(0,0); }
+  100% { transform: translate(80px, 80px); }
+}
+
+#slide-1::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 70% at 50% 50%, transparent 30%, rgba(13,13,13,.7) 100%);
+}
+
+.s1-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 96px 60px 20px;
+  gap: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.s1-top-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--rd), var(--r) 50%, var(--rd));
+}
+
+.s1-logos {
+  position: absolute;
+  top: 28px;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 48px;
+  align-items: center;
+}
+.s1-logo-box {
+  width: 90px; height: 72px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 4px;
+}
+.s1-logo-box img { width: 100%; height: 100%; object-fit: contain; filter: none; }
+
+.s1-badge {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--r);
+  border: 1px solid rgba(200,24,26,.4);
+  padding: 7px 24px;
+  margin-bottom: 14px;
+  background: rgba(200,24,26,.06);
+  white-space: nowrap;
+}
+
+.s1-abbr {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 160px;
+  line-height: .82;
+  letter-spacing: 8px;
+  color: #fff;
+  text-shadow: 0 0 80px rgba(200,24,26,.3);
+}
+.s1-abbr .ai { color: var(--r); }
+
+.s1-year {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 44px;
+  color: rgba(255,255,255,.18);
+  letter-spacing: 24px;
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+
+.s1-divider {
+  width: 120px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--r), transparent);
+  margin-bottom: 22px;
+}
+
+.s1-full {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: rgba(255,255,255,.85);
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 1.45;
+  margin-bottom: 14px;
+}
+
+.s1-meta {
+  display: flex;
+  gap: 0;
+  border: 1px solid rgba(255,255,255,.12);
+}
+.s1-meta-item {
+  padding: 12px 32px;
+  text-align: center;
+  border-right: 1px solid rgba(255,255,255,.1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.s1-meta-item:last-child { border-right: none; }
+.s1-mv {
+  font-family: 'Oswald', sans-serif;
+  font-size: 26px;
+  color: var(--r);
+  letter-spacing: 1px;
+}
+.s1-ml {
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  font-weight: 600;
+}
+
+.s1-theme {
+  position: relative;
+  background: rgba(200,24,26,.12);
+  border: 1px solid rgba(200,24,26,.35);
+  padding: 14px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
+  width: 90%;
+  max-width: 820px;
+  align-self: center;
+}
+.s1-theme-label {
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--r);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.s1-theme-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 22px;
+  color: rgba(255,255,255,.9);
+  letter-spacing: .4px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* ══════════════════════════════════════
+   SLIDE 2 — ALL SPEAKERS SNAPSHOT
+══════════════════════════════════════ */
+#slide-2 {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.s2-header {
+  background: var(--ink);
+  padding: 22px 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 4px solid var(--r);
+  flex-shrink: 0;
+  position: relative;
+}
+.s2-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--rd), var(--r), var(--rd));
+}
+.s2-hd-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.s2-hd-badge {
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--r);
+  font-weight: 700;
+}
+.s2-hd-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  color: #fff;
+  letter-spacing: 4px;
+  line-height: 1;
+}
+.s2-hd-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,.45);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.s2-hd-logo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.s2-hd-logo img {
+  height: 52px;
+  object-fit: contain;
+  filter: none;
+}
+
+.s2-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: center;
+  gap: 0;
+  padding: 16px 20px 10px;
+  width: 100%;
+}
+
+.s2-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  width: 25%;
+  flex-shrink: 0;
+}
+
+.s2-photo {
+  width: 148px;
+  height: 148px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(200,24,26,.3);
+  box-shadow: 0 4px 20px rgba(0,0,0,.14), 0 0 0 7px rgba(200,24,26,.07);
+  flex-shrink: 0;
+  background: #eee;
+}
+.s2-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.s2-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.25;
+  letter-spacing: .5px;
+}
+.s2-role {
+  font-size: 15px;
+  color: var(--r);
+  text-align: center;
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+.s2-inst {
+  font-size: 13px;
+  color: #888;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.s2-footer {
+  background: var(--ink);
+  padding: 10px 52px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.s2-fweb {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: #fff;
+  letter-spacing: 2px;
+}
+.s2-fdate {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--r);
+  font-weight: 700;
+}
+
+/* ══════════════════════════════════════
+   SLIDE 3–9 — INDIVIDUAL SPEAKER SLIDES
+══════════════════════════════════════ */
+.speaker-slide {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+.sp-top-accent {
+  height: 6px;
+  background: linear-gradient(90deg, var(--rd), var(--r) 50%, var(--rd));
+  flex-shrink: 0;
+}
+
+.sp-body {
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Left dark panel */
+.sp-left {
+  width: 420px;
+  flex-shrink: 0;
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 40px 32px;
+  position: relative;
+  gap: 0;
+}
+
+/* BG grid on left panel */
+.sp-left::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200,24,26,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,24,26,.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+.sp-left::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(13,13,13,.6) 100%);
+}
+
+.sp-photo-ring {
+  position: relative;
+  z-index: 2;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  border: 4px solid var(--r);
+  box-shadow:
+    0 0 0 10px rgba(200,24,26,.1),
+    0 0 0 20px rgba(200,24,26,.05),
+    0 20px 60px rgba(0,0,0,.5);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #1a1a1a;
+}
+.sp-photo-ring img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.sp-keynote-badge {
+  position: relative;
+  z-index: 2;
+  margin-top: 24px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--r);
+  border: 1px solid rgba(200,24,26,.4);
+  padding: 7px 22px;
+  background: rgba(200,24,26,.06);
+  text-align: center;
+}
+
+.sp-conf-name {
+  position: relative;
+  z-index: 2;
+  margin-top: 14px;
+  text-align: center;
+}
+.sp-icais {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 64px;
+  letter-spacing: 6px;
+  color: #fff;
+  line-height: 1;
+}
+.sp-icais .ai { color: var(--r); }
+.sp-year-sm {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  color: rgba(255,255,255,.25);
+  letter-spacing: 14px;
+}
+
+.sp-logos-row {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 14px;
+  margin-top: 20px;
+  align-items: center;
+}
+.sp-logo-sm {
+  width: 60px; height: 50px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 4px;
+}
+.sp-logo-sm img { width: 100%; height: 100%; object-fit: contain; filter: none; }
+
+/* Right info panel */
+.sp-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 64px 48px 56px;
+  position: relative;
+  background: #fff;
+}
+
+/* Subtle watermark */
+.sp-right::before {
+  content: 'ICAIS';
+  position: absolute;
+  right: -40px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 180px;
+  color: rgba(200,24,26,.04);
+  letter-spacing: 20px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.sp-label {
+  font-size: 12px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--r);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.sp-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 100px;
+  line-height: .88;
+  color: var(--ink);
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.sp-divider {
+  width: 80px;
+  height: 3px;
+  background: var(--r);
+  margin-bottom: 18px;
+}
+
+.sp-role {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-style: italic;
+  color: var(--mid);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.sp-inst {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 1px;
+  margin-bottom: 36px;
+}
+
+.sp-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sp-fact {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg2);
+  border-left: 3px solid var(--r);
+}
+.sp-fact-text {
+  font-size: 17px;
+  color: var(--mid);
+  line-height: 1.45;
+}
+.sp-fact-text strong { color: var(--ink); font-weight: 600; }
+
+.sp-footer-bar {
+  background: var(--ink);
+  padding: 12px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  border-top: 3px solid var(--r);
+}
+.sp-footer-web {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: #fff;
+  letter-spacing: 2px;
+}
+.sp-footer-date {
+  font-size: 12px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  font-weight: 600;
+}
+.sp-footer-email {
+  font-size: 13px;
+  color: rgba(255,255,255,.5);
+  letter-spacing: .5px;
+}
+
+/* ═══ THUMBNAILS STRIP ═══ */
+.thumb-strip {
+  width: 1280px;
+  max-width: 100%;
+  display: flex;
+  gap: 8px;
+  padding: 16px 0 0;
+  justify-content: center;
+  overflow-x: auto;
+}
+.thumb {
+  width: 120px;
+  height: 68px;
+  background: #2a2a2a;
+  border: 2px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all .2s;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+.thumb:hover { border-color: #666; }
+.thumb.active { border-color: var(--r); }
+.thumb-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #888;
+  text-align: center;
+  padding: 4px;
+  line-height: 1.3;
+}
+.thumb.active .thumb-label { color: var(--r); }
+
+/* Keyboard hint */
+.kb-hint {
+  font-size: 11px;
+  color: #444;
+  letter-spacing: 1px;
+  text-align: center;
+  padding: 10px 0 0;
+}
+.kb-hint kbd {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 3px;
+  padding: 2px 7px;
+  font-family: monospace;
+  font-size: 11px;
+  color: #aaa;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOOLBAR ═══ -->
+<div class="toolbar">
+  <div class="tb-title">ICAIS <span>2026</span> — Auditorium Slides</div>
+  <div class="tb-right">
+    <div id="status">Ready</div>
+    <button class="btn btn-dark btn-nav" id="prevBtn" onclick="changeSlide(-1)" disabled>&#8592;</button>
+    <div class="slide-counter"><span id="currentNum">1</span> / <span id="totalNum">9</span></div>
+    <button class="btn btn-dark btn-nav" id="nextBtn" onclick="changeSlide(1)">&#8594;</button>
+    <div class="slide-dots" id="dotContainer"></div>
+    <button class="btn btn-dark" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    <button class="btn btn-red" id="pdfBtn" onclick="downloadPDF()">⬇ Download PDF</button>
+  </div>
+</div>
+
+<!-- ═══ STAGE ═══ -->
+<div class="viewport">
+  <div class="stage" id="stage">
+
+    <!-- ══════════ SLIDE 1 — CONFERENCE ══════════ -->
+    <div class="slide active" id="slide-1">
+      <div class="s1-top-bar"></div>
+      <div class="s1-content">
+        <div class="s1-logos">
+          <div class="s1-logo-box"><img src="nmimsfin.png" alt="NMIMS"></div>
+          <div class="s1-logo-box"><img src="springerfin.png" alt="Springer"></div>
+        </div>
+        <div class="s1-badge">1st International Conference · ICAIS 2026</div>
+        <div class="s1-abbr"><span>IC</span><span class="ai">AI</span><span>S</span></div>
+        <div class="s1-year">2026</div>
+        <div class="s1-divider"></div>
+        <div class="s1-full">International Conference on<br>Artificial Intelligence and Security</div>
+        <div class="s1-meta">
+          <div class="s1-meta-item">
+            <div class="s1-mv">Apr 2–3, 2026</div>
+            <div class="s1-ml">Conference Dates</div>
+          </div>
+          <div class="s1-meta-item">
+            <div class="s1-mv">Indore, India</div>
+            <div class="s1-ml">Hybrid Mode</div>
+          </div>
+          <div class="s1-meta-item">
+            <div class="s1-mv">09:00 – 17:30</div>
+            <div class="s1-ml">Both Days</div>
+          </div>
+          <div class="s1-meta-item">
+            <div class="s1-mv">5</div>
+            <div class="s1-ml">Keynote Speakers</div>
+          </div>
+        </div>
+        <div class="s1-theme">
+          <div class="s1-theme-label">✦ Conference Theme ✦</div>
+          <div class="s1-theme-text">AI for a Secure and Trustworthy Digital Future —<br>Innovate. Protect. Transform.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ SLIDE 2 — ALL SPEAKERS ══════════ -->
+    <div class="slide" id="slide-2">
+      <div class="s2-header">
+        <div class="s2-hd-left">
+          <div class="s2-hd-badge">ICAIS 2026 · Keynote Sessions</div>
+          <div class="s2-hd-title">Our Speakers</div>
+          <div class="s2-hd-sub">SVKM's NMIMS Indore · April 2–3, 2026</div>
+        </div>
+        <div class="s2-hd-logo">
+          <img src="nmimsfin.png" alt="NMIMS">
+          <img src="springerfin.png" alt="Springer">
+        </div>
+      </div>
+      <div class="s2-grid">
+        <div class="s2-card">
+          <div class="s2-photo"><img src="speaker1.png" alt="Prof. Himanshu Rai"></div>
+          <div class="s2-name">Prof. Himanshu Rai</div>
+          <div class="s2-role">Director</div>
+          <div class="s2-inst">IIM Indore</div>
+        </div>
+        <div class="s2-card">
+          <div class="s2-photo"><img src="speaker2.png" alt="Prof. Neetesh Purohit"></div>
+          <div class="s2-name">Prof. Neetesh Purohit</div>
+          <div class="s2-role">Director</div>
+          <div class="s2-inst">SGSITS Indore</div>
+        </div>
+        <div class="s2-card">
+          <div class="s2-photo"><img src="speaker4.png" alt="Dr. Pritee Sharma"></div>
+          <div class="s2-name">Dr. Pritee Sharma</div>
+          <div class="s2-role">Assoc. Prof. & Dean</div>
+          <div class="s2-inst">IIT Indore</div>
+        </div>
+        <div class="s2-card">
+          <div class="s2-photo"><img src="speaker6.jpeg" alt="Dr. Shamik Tiwari"></div>
+          <div class="s2-name">Dr. Shamik Tiwari</div>
+          <div class="s2-role">Professor & Dean</div>
+          <div class="s2-inst">IILM University, Gurugram</div>
+        </div>
+        <div class="s2-card">
+          <div class="s2-photo"><img src="speaker7.png" alt="Dr. Bhargavi Goswami"></div>
+          <div class="s2-name">Dr. Bhargavi Goswami</div>
+          <div class="s2-role">Researcher</div>
+          <div class="s2-inst">AIBI, Brisbane, Australia</div>
+        </div>
+      </div>
+      <div class="s2-footer">
+        <div class="s2-fweb">www.icais2026.com</div>
+        <div class="s2-fdate">April 2–3, 2026 · Indore, India</div>
+        <div style="font-size:12px;color:#666;letter-spacing:1px;">icais.indore2026@nmims.edu</div>
+      </div>
+    </div>
+
+    <!-- ══════════ SLIDES 3–9 — INDIVIDUAL SPEAKERS ══════════ -->
+
+    <!-- Speaker 1: Himanshu Rai -->
+    <div class="slide speaker-slide" id="slide-3">
+      <div class="sp-top-accent"></div>
+      <div class="sp-body">
+        <div class="sp-left">
+          <div class="sp-photo-ring"><img src="speaker1.png" alt="Prof. Himanshu Rai"></div>
+          <div class="sp-keynote-badge">✦ Keynote Speaker ✦</div>
+          <div class="sp-conf-name">
+            <div class="sp-icais"><span>IC</span><span class="ai">AI</span><span>S</span></div>
+            <div class="sp-year-sm">2026</div>
+          </div>
+          <div class="sp-logos-row">
+            <div class="sp-logo-sm"><img src="nmimsfin.png" alt="NMIMS"></div>
+            <div class="sp-logo-sm"><img src="springerfin.png" alt="Springer"></div>
+          </div>
+        </div>
+        <div class="sp-right">
+          <div class="sp-label">Keynote Speaker · ICAIS 2026</div>
+          <div class="sp-name">Prof.<br>Himanshu<br>Rai</div>
+          <div class="sp-divider"></div>
+          <div class="sp-role">Director, Indian Institute of Management</div>
+          <div class="sp-inst">IIM Indore</div>
+          <div class="sp-facts">
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Institution:</strong> Indian Institute of Management Indore — Premier Management School</div>
+            </div>
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Expertise:</strong> Organizational Behaviour, Leadership, Ethics & Governance</div>
+            </div>
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Recognition:</strong> Ranked among India's top business school directors</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sp-footer-bar">
+        <div class="sp-footer-web">www.icais2026.com</div>
+        <div class="sp-footer-date">April 2–3, 2026 · Indore, India</div>
+        <div class="sp-footer-email">icais.indore2026@nmims.edu</div>
+      </div>
+    </div>
+
+    <!-- Speaker 2: Neetesh Purohit -->
+    <div class="slide speaker-slide" id="slide-4">
+      <div class="sp-top-accent"></div>
+      <div class="sp-body">
+        <div class="sp-left">
+          <div class="sp-photo-ring"><img src="speaker2.png" alt="Prof. Neetesh Purohit"></div>
+          <div class="sp-keynote-badge">✦ Keynote Speaker ✦</div>
+          <div class="sp-conf-name">
+            <div class="sp-icais"><span>IC</span><span class="ai">AI</span><span>S</span></div>
+            <div class="sp-year-sm">2026</div>
+          </div>
+          <div class="sp-logos-row">
+            <div class="sp-logo-sm"><img src="nmimsfin.png" alt="NMIMS"></div>
+            <div class="sp-logo-sm"><img src="springerfin.png" alt="Springer"></div>
+          </div>
+        </div>
+        <div class="sp-right">
+          <div class="sp-label">Keynote Speaker · ICAIS 2026</div>
+          <div class="sp-name">Prof.<br>Neetesh<br>Purohit</div>
+          <div class="sp-divider"></div>
+          <div class="sp-role">Director, Shri Govindram Seksaria Institute</div>
+          <div class="sp-inst">SGSITS Indore</div>
+          <div class="sp-facts">
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Institution:</strong> SGSITS Indore — Autonomous Institute, Govt. of MP</div>
+            </div>
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Expertise:</strong> Computer Networks, Cybersecurity, Information Technology</div>
+            </div>
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Role:</strong> Leading India's legacy technical education institution since founding</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sp-footer-bar">
+        <div class="sp-footer-web">www.icais2026.com</div>
+        <div class="sp-footer-date">April 2–3, 2026 · Indore, India</div>
+        <div class="sp-footer-email">icais.indore2026@nmims.edu</div>
+      </div>
+    </div>
+
+    <!-- Speaker 3: Pritee Sharma -->
+    <div class="slide speaker-slide" id="slide-5">
+      <div class="sp-top-accent"></div>
+      <div class="sp-body">
+        <div class="sp-left">
+          <div class="sp-photo-ring"><img src="speaker4.png" alt="Dr. Pritee Sharma"></div>
+          <div class="sp-keynote-badge">✦ Keynote Speaker ✦</div>
+          <div class="sp-conf-name">
+            <div class="sp-icais"><span>IC</span><span class="ai">AI</span><span>S</span></div>
+            <div class="sp-year-sm">2026</div>
+          </div>
+          <div class="sp-logos-row">
+            <div class="sp-logo-sm"><img src="nmimsfin.png" alt="NMIMS"></div>
+            <div class="sp-logo-sm"><img src="springerfin.png" alt="Springer"></div>
+          </div>
+        </div>
+        <div class="sp-right">
+          <div class="sp-label">Keynote Speaker · ICAIS 2026</div>
+          <div class="sp-name">Dr. Pritee<br>Sharma</div>
+          <div class="sp-divider"></div>
+          <div class="sp-role">Associate Professor & Dean</div>
+          <div class="sp-inst">IIT Indore</div>
+          <div class="sp-facts">
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Institution:</strong> Indian Institute of Technology Indore — Institute of National Importance</div>
+            </div>
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Expertise:</strong> Computer Vision, Pattern Recognition, Deep Learning</div>
+            </div>
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Distinction:</strong> Pioneering researcher in AI-based medical imaging and visual analytics</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sp-footer-bar">
+        <div class="sp-footer-web">www.icais2026.com</div>
+        <div class="sp-footer-date">April 2–3, 2026 · Indore, India</div>
+        <div class="sp-footer-email">icais.indore2026@nmims.edu</div>
+      </div>
+    </div>
+
+    <!-- Speaker 5: Shamik Tiwari -->
+    <div class="slide speaker-slide" id="slide-6">
+      <div class="sp-top-accent"></div>
+      <div class="sp-body">
+        <div class="sp-left">
+          <div class="sp-photo-ring"><img src="speaker6.jpeg" alt="Dr. Shamik Tiwari"></div>
+          <div class="sp-keynote-badge">✦ Keynote Speaker ✦</div>
+          <div class="sp-conf-name">
+            <div class="sp-icais"><span>IC</span><span class="ai">AI</span><span>S</span></div>
+            <div class="sp-year-sm">2026</div>
+          </div>
+          <div class="sp-logos-row">
+            <div class="sp-logo-sm"><img src="nmimsfin.png" alt="NMIMS"></div>
+            <div class="sp-logo-sm"><img src="springerfin.png" alt="Springer"></div>
+          </div>
+        </div>
+        <div class="sp-right">
+          <div class="sp-label">Keynote Speaker · ICAIS 2026</div>
+          <div class="sp-name">Dr. Shamik<br>Tiwari</div>
+          <div class="sp-divider"></div>
+          <div class="sp-role">Professor & Dean</div>
+          <div class="sp-inst">IILM University, Gurugram</div>
+          <div class="sp-facts">
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Institution:</strong> IILM University, Gurugram — Multidisciplinary Research University</div>
+            </div>
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Expertise:</strong> Digital Image Processing, AI, Machine Learning Applications</div>
+            </div>
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Distinction:</strong> Prolific researcher with extensive journal publications and academic leadership</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sp-footer-bar">
+        <div class="sp-footer-web">www.icais2026.com</div>
+        <div class="sp-footer-date">April 2–3, 2026 · Indore, India</div>
+        <div class="sp-footer-email">icais.indore2026@nmims.edu</div>
+      </div>
+    </div>
+
+    <!-- Speaker 6: Bhargavi Goswami -->
+    <div class="slide speaker-slide" id="slide-7">
+      <div class="sp-top-accent"></div>
+      <div class="sp-body">
+        <div class="sp-left">
+          <div class="sp-photo-ring"><img src="speaker7.png" alt="Dr. Bhargavi Goswami"></div>
+          <div class="sp-keynote-badge">✦ Keynote Speaker ✦</div>
+          <div class="sp-conf-name">
+            <div class="sp-icais"><span>IC</span><span class="ai">AI</span><span>S</span></div>
+            <div class="sp-year-sm">2026</div>
+          </div>
+          <div class="sp-logos-row">
+            <div class="sp-logo-sm"><img src="nmimsfin.png" alt="NMIMS"></div>
+            <div class="sp-logo-sm"><img src="springerfin.png" alt="Springer"></div>
+          </div>
+        </div>
+        <div class="sp-right">
+          <div class="sp-label">Keynote Speaker · ICAIS 2026</div>
+          <div class="sp-name">Dr. Bhargavi<br>Goswami</div>
+          <div class="sp-divider"></div>
+          <div class="sp-role">Researcher & Academic</div>
+          <div class="sp-inst">AIBI, Brisbane, Australia</div>
+          <div class="sp-facts">
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Institution:</strong> Australian Institute of Business Intelligence, Brisbane</div>
+            </div>
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>Expertise:</strong> AI Ethics, Business Intelligence, Data-Driven Decision Systems</div>
+            </div>
+            <div class="sp-fact">
+              <div class="sp-fact-text"><strong>International:</strong> India–Australia research bridge in emerging AI technologies</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sp-footer-bar">
+        <div class="sp-footer-web">www.icais2026.com</div>
+        <div class="sp-footer-date">April 2–3, 2026 · Indore, India</div>
+        <div class="sp-footer-email">icais.indore2026@nmims.edu</div>
+      </div>
+    </div>
+
+    <!-- ══════════ SLIDE 8 — CLOSING ══════════ -->
+    <div class="slide" id="slide-8" style="background:var(--ink);display:flex;flex-direction:column;overflow:hidden;">
+      <!-- animated grid bg -->
+      <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(200,24,26,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(200,24,26,.05) 1px,transparent 1px);background-size:80px 80px;animation:gridMove 20s linear infinite;"></div>
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 70% at 50% 50%,transparent 30%,rgba(13,13,13,.75) 100%);"></div>
+      <!-- top accent -->
+      <div style="position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--rd),var(--r) 50%,var(--rd));z-index:3;"></div>
+
+      <!-- logos -->
+      <div style="position:absolute;top:28px;left:0;right:0;display:flex;justify-content:space-between;padding:0 48px;align-items:center;z-index:3;">
+        <img src="nmimsfin.png" alt="NMIMS" style="height:64px;object-fit:contain;">
+        <img src="springerfin.png" alt="Springer" style="height:64px;object-fit:contain;">
+      </div>
+
+      <!-- main content -->
+      <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:80px 80px 60px;gap:0;">
+
+        <div style="font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:6px;text-transform:uppercase;color:var(--r);margin-bottom:20px;border:1px solid rgba(200,24,26,.35);padding:7px 28px;background:rgba(200,24,26,.06);">ICAIS 2026 · SVKM's NMIMS Indore</div>
+
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:96px;line-height:1;letter-spacing:6px;color:#fff;text-align:center;text-shadow:0 0 60px rgba(200,24,26,.25);margin-bottom:10px;">Join Us at ICAIS 2026</div>
+
+        <div style="width:100px;height:3px;background:linear-gradient(90deg,transparent,var(--r),transparent);margin:18px auto 24px;"></div>
+
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:28px;color:rgba(255,255,255,.8);text-align:center;line-height:1.55;max-width:780px;margin-bottom:36px;">
+          International Conference on Artificial Intelligence and Security<br>
+          <span style="font-size:22px;color:rgba(255,255,255,.5);">April 2–3, 2026 &nbsp;·&nbsp; SVKM's NMIMS Indore &nbsp;·&nbsp; Hybrid Mode</span>
+        </div>
+
+        <!-- info boxes -->
+        <div style="display:flex;gap:0;border:1px solid rgba(255,255,255,.1);margin-bottom:36px;">
+          <div style="padding:18px 44px;text-align:center;border-right:1px solid rgba(255,255,255,.08);">
+            <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--r);letter-spacing:1px;margin-bottom:4px;">www.icais2026.com</div>
+            <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.35);font-weight:700;">Conference Website</div>
+          </div>
+          <div style="padding:18px 44px;text-align:center;border-right:1px solid rgba(255,255,255,.08);">
+            <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--r);letter-spacing:.5px;margin-bottom:4px;">icais.indore2026@nmims.edu</div>
+            <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.35);font-weight:700;">Contact</div>
+          </div>
+          <div style="padding:18px 44px;text-align:center;">
+            <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--r);letter-spacing:1px;margin-bottom:4px;">Springer LNCS</div>
+            <div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.35);font-weight:700;">Proceedings</div>
+          </div>
+        </div>
+
+        <!-- theme line -->
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:rgba(200,24,26,.8);letter-spacing:.5px;text-align:center;">
+          AI for a Secure and Trustworthy Digital Future — Innovate. Protect. Transform.
+        </div>
+
+      </div>
+
+      <!-- bottom bar -->
+      <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(200,24,26,.15);border-top:2px solid rgba(200,24,26,.4);padding:12px 48px;display:flex;justify-content:space-between;align-items:center;z-index:3;">
+        <div style="font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.4);">SVKM's NMIMS · School of Technology, Management &amp; Engineering · Indore Campus</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:rgba(255,255,255,.5);letter-spacing:2px;">ICAIS 2026</div>
+      </div>
+    </div>
+
+  </div><!-- /stage -->
+</div><!-- /viewport -->
+
+<!-- ═══ THUMBNAILS ═══ -->
+<div class="thumb-strip" id="thumbStrip"></div>
+<div class="kb-hint">Navigate: <kbd>←</kbd> <kbd>→</kbd> arrow keys &nbsp;·&nbsp; <kbd>F</kbd> fullscreen &nbsp;·&nbsp; <kbd>P</kbd> download PDF</div>
+
+<script>
+const TOTAL = 8;
+let current = 1;
+
+const thumbLabels = [
+  'Conference\nHome',
+  'All\nSpeakers',
+  'Prof.\nHimanshu Rai',
+  'Prof.\nNeetesh Purohit',
+  'Dr.\nPritee Sharma',
+  'Dr.\nShamik Tiwari',
+  'Dr.\nBhargavi Goswami',
+  'Closing\nSlide'
+];
+
+// Build dots + thumbnails
+const dotContainer = document.getElementById('dotContainer');
+const thumbStrip = document.getElementById('thumbStrip');
+
+for (let i = 1; i <= TOTAL; i++) {
+  const dot = document.createElement('button');
+  dot.className = 'dot' + (i === 1 ? ' active' : '');
+  dot.onclick = () => goTo(i);
+  dotContainer.appendChild(dot);
+
+  const thumb = document.createElement('div');
+  thumb.className = 'thumb' + (i === 1 ? ' active' : '');
+  thumb.onclick = () => goTo(i);
+  thumb.innerHTML = `<div class="thumb-label">${thumbLabels[i-1]}</div>`;
+  thumbStrip.appendChild(thumb);
+}
+
+function goTo(n) {
+  document.getElementById('slide-' + current).classList.remove('active');
+  current = n;
+  document.getElementById('slide-' + current).classList.add('active');
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i + 1 === current));
+  document.querySelectorAll('.thumb').forEach((t, i) => t.classList.toggle('active', i + 1 === current));
+  document.getElementById('currentNum').textContent = current;
+  document.getElementById('prevBtn').disabled = current === 1;
+  document.getElementById('nextBtn').disabled = current === TOTAL;
+}
+
+function changeSlide(dir) {
+  const next = current + dir;
+  if (next >= 1 && next <= TOTAL) goTo(next);
+}
+
+function toggleFullscreen() {
+  const stage = document.getElementById('stage');
+  if (!document.fullscreenElement) {
+    stage.requestFullscreen().catch(() => {});
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); changeSlide(-1); }
+  if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+  if (e.key === 'p' || e.key === 'P') downloadPDF();
+});
+
+// ═══ PDF EXPORT ═══
+async function downloadPDF() {
+  const btn = document.getElementById('pdfBtn');
+  const status = document.getElementById('status');
+  btn.disabled = true;
+  status.className = 'active';
+
+  const slideNames = [
+    'Conference Home', 'All Speakers',
+    'Himanshu Rai', 'Neetesh Purohit',
+    'Pritee Sharma', 'Shamik Tiwari', 'Bhargavi Goswami', 'Closing'
+  ];
+
+  try {
+    const { jsPDF } = window.jspdf;
+    // Exact 16:9 page: 320mm × 180mm — slides fill page edge to edge, zero white bars
+    const PW = 320, PH = 180;
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [PW, PH] });
+
+    const savedSlide = current;
+
+    for (let i = 1; i <= TOTAL; i++) {
+      status.textContent = `Rendering ${slideNames[i-1]}… (${i}/${TOTAL})`;
+      goTo(i);
+      await new Promise(r => setTimeout(r, 400)); // allow render
+
+      const el = document.getElementById('slide-' + i);
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        width: 1280,
+        height: 720
+      });
+
+      if (i > 1) pdf.addPage([PW, PH], 'landscape');
+      // Fill page exactly — canvas is 1280×720, page is 320×180mm, same 16:9 ratio
+      pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, PW, PH);
+    }
+
+    pdf.save('ICAIS2026_Presentation.pdf');
+    goTo(savedSlide);
+    status.className = '';
+    status.textContent = 'PDF saved ✓';
+    setTimeout(() => { status.textContent = 'Ready'; }, 3000);
+  } catch(e) {
+    alert('Export failed: ' + e.message);
+    status.className = '';
+    status.textContent = 'Export failed';
+  } finally {
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
